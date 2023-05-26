@@ -4,28 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ContactRequest;
 use App\Http\Resources\ContactResource;
+use App\Services\ContactService;
 use App\Repositories\Interfaces\ContactRepositoryInterface;
 use Facade\FlareClient\Http\Response;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ContactController extends Controller
 {
 
-    protected ContactRepositoryInterface $contactRepository;
+    protected ContactService $contactService;
 
-    public function __construct(ContactRepositoryInterface $contactRepository)
+    public function __construct(ContactService $contactService)
     {
-        $this->contactRepository = $contactRepository; 
+        $this->contactService = $contactService; 
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return AnonymousResourceCollection
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
-        return ContactResource::collection($this->contactRepository->all());
+        return ContactResource::collection(
+            $this->contactService->all()
+        );
     }
 
     /**
@@ -34,20 +39,24 @@ class ContactController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ContactRequest $request)
+    public function store(ContactRequest $request): ContactResource
     {
-        return new ContactResource($this->contactRepository->create($request->all()));
+        return new ContactResource(
+            $this->contactService->create($request->all())
+        );
     }
 
     /**
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return ContactResource
      */
-    public function show($id)
+    public function show($id): ContactResource
     {
-        return new ContactResource($this->contactRepository->find($id));
+        return new ContactResource(
+            $this->contactService->find($id)
+        );
     }
 
     /**
@@ -59,7 +68,9 @@ class ContactController extends Controller
      */
     public function update(Request $request, $id)
     {
-        return new ContactResource($this->contactRepository->update($request->all(), $id));
+        return new ContactResource(
+            $this->contactService->update($request->all(), $id)
+        );
     }
 
     /**
@@ -70,7 +81,7 @@ class ContactController extends Controller
      */
     public function destroy($id)
     {
-        if($this->contactRepository->delete($id)) {
+        if($this->contactService->delete($id)) {
             return response()->json(null, 204);
         }
     }

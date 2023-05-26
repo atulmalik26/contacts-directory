@@ -9,7 +9,7 @@ class ContactRepository implements ContactRepositoryInterface
 {
     public function all()
     {
-        return Contact::all();
+        return Contact::paginate(5);
     }
 
     public function find(int $id)
