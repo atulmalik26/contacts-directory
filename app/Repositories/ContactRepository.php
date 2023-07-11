@@ -4,32 +4,64 @@ namespace App\Repositories;
 
 use App\Models\Contact;
 use App\Repositories\Interfaces\ContactRepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ContactRepository implements ContactRepositoryInterface
 {
-    public function all()
+    /**
+     * Return paginated contacts.
+     *
+     * @return LengthAwarePaginator
+     */
+    public function all(): LengthAwarePaginator
     {
-        return Contact::all();
+        return Contact::paginate(10);
     }
 
-    public function find(int $id)
+    /**
+     * Finds a contact by id.
+     *
+     * @param int $id
+     * @return Contact
+     */
+    public function find(int $id): Contact
     {
         return Contact::findOrFail($id);
     }
 
-    public function create(array $data)
+    /**
+     * Creates a new contact.
+     *
+     * @param array $data Contact data
+     * @return Contact
+     */
+    public function create(array $data): Contact
     {
         return Contact::create($data);
     }
 
-    public function update(array $data, int $id)
+    /**
+     * Updates a contact.
+     *
+     * @param array $data Contact data
+     * @param int $id Contact id
+     *
+     * @return Contact
+     */
+    public function update(array $data, int $id): Contact
     {
         Contact::findOrFail($id)->update($data);
 
         return Contact::find($id);
     }
 
-    public function delete(int $id)
+    /**
+     * Deletes a contact.
+     *
+     * @param int $id Contact id
+     * @return int
+     */
+    public function delete(int $id): int
     {
         return Contact::destroy($id);
     }

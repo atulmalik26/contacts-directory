@@ -18,7 +18,7 @@ class ContactPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -30,7 +30,7 @@ class ContactPolicy
      */
     public function view(User $user, Contact $contact)
     {
-        //
+        return true;
     }
 
     /**
@@ -41,7 +41,7 @@ class ContactPolicy
      */
     public function create(User $user)
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class ContactPolicy
      */
     public function update(User $user, Contact $contact)
     {
-        //
+        return true;
     }
 
     /**
@@ -65,7 +65,7 @@ class ContactPolicy
      */
     public function delete(User $user, Contact $contact)
     {
-        //
+        return true;
     }
 
     /**
@@ -77,7 +77,7 @@ class ContactPolicy
      */
     public function restore(User $user, Contact $contact)
     {
-        //
+        return true;
     }
 
     /**
@@ -89,6 +89,6 @@ class ContactPolicy
      */
     public function forceDelete(User $user, Contact $contact)
     {
-        //
+        return true;
     }
 }

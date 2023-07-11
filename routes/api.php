@@ -18,4 +18,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('contacts', 'App\Http\Controllers\ContactController')->only(['index', 'show', 'store', 'update', 'destroy']);
+Route::apiResource('contacts', 'App\Http\Controllers\ContactController');
