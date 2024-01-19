@@ -9,9 +9,12 @@ use App\Services\ContactService;
 use App\Repositories\Interfaces\ContactRepositoryInterface;
 use Facade\FlareClient\Http\Response;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Routing\ResponseFactory;
 use Illuminate\Support\Facades\Log;
+use PharIo\Manifest\Application;
 
 class ContactController extends Controller
 {
@@ -27,7 +30,7 @@ class ContactController extends Controller
      */
     public function __construct(ContactService $contactService)
     {
-        //$this->authorizeResource(Contact::class);
+        $this->authorizeResource(Contact::class);
 
         $this->contactService = $contactService;
     }
@@ -47,14 +50,15 @@ class ContactController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param ContactRequest $request
+     * @return ContactResource
      */
-    public function store(ContactRequest $request)
+    public function store(ContactRequest $request): ContactResource|Application|Response|ResponseFactory
     {
         try {
-            return $this->contactService->create(
+            return new ContactResource($this->contactService->create(
                 $request->validated()
-            );
+            ));
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 
@@ -69,9 +73,10 @@ class ContactController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return ContactResource|Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     *
+     * @return ContactResource
      */
-    public function show(int $id)
+    public function show(int $id): ContactResource|Application|Response|ResponseFactory
     {
         try {
             return new ContactResource(
@@ -80,7 +85,7 @@ class ContactController extends Controller
         } catch (\Exception $e) {
             Log::error($e->getMessage());
 
-            return Response(
+            return \response(
                 'Request Unsuccessful. Unable to find response.',
                 400
             );
@@ -90,11 +95,12 @@ class ContactController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param ContactRequest $request
+     * @param int $id
+     *
+     * @return ContactResource
      */
-    public function update(Request $request, $id)
+    public function update(ContactRequest  $request, int $id): ContactResource
     {
         return new ContactResource(
             $this->contactService->update($request->all(), $id)
@@ -104,13 +110,16 @@ class ContactController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     *
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy(int $id): JsonResponse
     {
         if($this->contactService->delete($id)) {
             return response()->json(null, 204);
         }
+
+        return response()->json(null, 400);
     }
 }
